@@ -1,0 +1,81 @@
+page { background: var(--bg); }
+
+.search-bar {
+  background: #fff;
+  padding: 20rpx 24rpx;
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.search-input-wrap {
+  flex: 1;
+  background: #F6F8FB;
+  border-radius: 36rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 24rpx;
+  height: 68rpx;
+}
+.s-icon { font-size: 28rpx; margin-right: 12rpx; }
+.s-input { flex: 1; font-size: 28rpx; }
+.s-placeholder { color: var(--text-3); }
+.s-clear { color: var(--text-3); padding: 0 8rpx; }
+.s-filter-btn {
+  margin-left: 20rpx;
+  padding: 14rpx 28rpx;
+  border-radius: 34rpx;
+  background: var(--brand-light);
+  color: var(--brand);
+  font-size: 26rpx;
+  flex-shrink: 0;
+}
+.s-filter-on { background: var(--brand); color: #fff; }
+
+.sort-bar { padding: 16rpx 24rpx 4rpx; }
+.sort-item { font-size: 26rpx; color: var(--text-2); display: inline-block; }
+
+.filter-panel {
+  background: #fff;
+  margin: 16rpx 24rpx;
+  padding: 28rpx;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.f-row { display: flex; align-items: center; margin-bottom: 16rpx; flex-wrap: wrap; }
+.f-label { font-size: 26rpx; color: var(--text-2); margin-right: 16rpx; min-width: 110rpx; }
+.f-picker { font-size: 26rpx; color: var(--text-1); background: #F6F8FB; padding: 14rpx 24rpx; border-radius: 10rpx; }
+.f-input {
+  background: #F6F8FB;
+  border-radius: 10rpx;
+  padding: 12rpx 20rpx;
+  font-size: 26rpx;
+  width: 200rpx;
+}
+.f-chips { display: flex; flex-wrap: wrap; margin-top: 8rpx; }
+.f-chip {
+  padding: 10rpx 28rpx;
+  border-radius: 30rpx;
+  background: #F0F2F5;
+  color: var(--text-2);
+  font-size: 26rpx;
+  margin: 8rpx 16rpx 8rpx 0;
+}
+.f-chip-on { background: var(--brand-light); color: var(--brand); border: 2rpx solid var(--brand); }
+.f-slider { flex: 1; }
+.f-actions { display: flex; margin-top: 24rpx; }
+.f-btn { flex: 1; margin: 0 10rpx; }
+
+.list-wrap { padding: 16rpx 0 40rpx; }
+.room-card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28rpx;
+  margin: 0 24rpx 24rpx;
+}
+.device-tags { margin-top: 14rpx; }
+.device-tags .tag { margin-top: 8rpx; }
+
+.load-more { text-align: center; padding: 20rpx 0 40rpx; }

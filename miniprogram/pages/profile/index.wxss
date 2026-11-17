@@ -1,0 +1,80 @@
+page { background: var(--bg); }
+
+.profile-header { padding-bottom: 110rpx; }
+.avatar-wrap {
+  position: relative;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+.avatar-wrap .avatar {
+  margin-right: 0;
+}
+.avatar-badge {
+  position: absolute;
+  right: -6rpx;
+  bottom: -2rpx;
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.6);
+}
+.avatar {
+  width: 108rpx;
+  height: 108rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+.avatar-ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52rpx;
+}
+.arrow-w { color: rgba(255, 255, 255, 0.8); font-size: 44rpx; }
+
+.menu-row {
+  display: flex;
+  align-items: center;
+  padding: 26rpx 8rpx;
+  border-bottom: 2rpx solid var(--line);
+}
+.menu-row:last-child { border-bottom: none; }
+.menu-icon {
+  font-size: 36rpx;
+  width: 64rpx;
+  text-align: center;
+  margin-right: 16rpx;
+}
+.menu-label { font-size: 28rpx; }
+.arrow { color: var(--text-3); font-size: 36rpx; }
+
+.mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 22, 36, 0.55);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.popup {
+  width: 86%;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 36rpx 32rpx;
+}
+.p-title { font-size: 34rpx; font-weight: 600; margin-bottom: 20rpx; text-align: center; }
+.privacy-body {
+  max-height: 50vh;
+  font-size: 26rpx;
+  color: var(--text-2);
+  line-height: 1.8;
+  margin-bottom: 24rpx;
+}

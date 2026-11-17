@@ -1,0 +1,32 @@
+page { background: var(--bg); }
+
+.tabs {
+  background: #fff;
+  display: flex;
+  padding: 0 24rpx;
+}
+.tab {
+  padding: 22rpx 0;
+  margin-right: 48rpx;
+  font-size: 28rpx;
+  color: var(--text-2);
+  border-bottom: 6rpx solid transparent;
+}
+.tab-on {
+  color: var(--brand);
+  font-weight: 600;
+  border-bottom-color: var(--brand);
+}
+
+.list-wrap { padding: 16rpx 0 40rpx; }
+.fav-card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 26rpx;
+  margin: 0 24rpx 24rpx;
+  display: flex;
+  align-items: center;
+}
+.btn-del { background: #FDECEC; color: var(--danger); flex-shrink: 0; }
+.load-more { text-align: center; padding: 20rpx 0 40rpx; }

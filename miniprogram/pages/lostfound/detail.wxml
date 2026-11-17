@@ -1,0 +1,146 @@
+<skeleton wx:if="{{loading}}" type="detail" />
+<empty
+  wx:elif="{{error}}"
+  mode="error"
+  sub="信息加载失败或已被删除"
+  btnText="重新加载"
+  bind:action="retry"
+/>
+<block wx:else>
+  <view class="card">
+    <view class="flex-between">
+      <view class="t-title flex-1 ellipsis">{{item.title}}</view>
+      <text class="tag {{item.kind === 'LOST' ? 'tag-warm' : 'tag-success'}}">{{item.kindText}}</text>
+    </view>
+    <view class="meta-row">
+      <text class="tag tag-gray">{{item.statusText}}</text>
+      <text class="tag tag-gray">{{item.category}}</text>
+      <text class="t-tip">👁 {{item.viewCount || 0}} 次浏览</text>
+    </view>
+    <view class="t-tip" style="margin-top:12rpx">发生时间：{{item.timeText}}</view>
+    <view class="t-tip" wx:if="{{item.buildingName || item.locationDesc}}" style="margin-top:6rpx">
+      📍 {{item.buildingName || ''}}{{item.locationDesc ? ' ' + item.locationDesc : ''}}
+    </view>
+    <view class="desc-box" wx:if="{{item.description}}">{{item.description}}</view>
+  </view>
+
+  <!-- 图片 -->
+  <view class="card" wx:if="{{images.length > 0}}">
+    <view class="card-title">照片（{{images.length}}）</view>
+    <view class="img-grid">
+      <view class="img-cell" wx:for="{{images}}" wx:key="*this">
+        <image src="{{item}}" mode="aspectFill" data-url="{{item}}" bindtap="previewImage" />
+      </view>
+    </view>
+  </view>
+
+  <!-- 联系方式 -->
+  <view class="card">
+    <view class="card-title">联系方式</view>
+    <block wx:if="{{item.contactShown}}">
+      <view class="flex-between">
+        <view class="flex-1">
+          <view class="t-bold">{{item.contactMasked}}</view>
+          <view class="t-tip">为保护隐私已脱敏展示，可复制完整联系方式</view>
+        </view>
+        <button class="btn btn-sm" bindtap="copyContact">复制</button>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="t-sub">联系方式未公开</view>
+      <view class="t-tip" style="margin-top:8rpx">如认为该物品与你有关，可提交认领申请，发布者会与你联系</view>
+    </block>
+  </view>
+
+  <!-- 疑似匹配 -->
+  <view class="card">
+    <view class="card-title">疑似匹配（{{matches.length}}）</view>
+    <view class="t-tip" style="margin-bottom:12rpx">🔎 系统按类别/关键词/时间地点规则自动匹配，仅供参考，请自行核实</view>
+    <view wx:if="{{loadingMatches}}" class="t-tip">匹配计算中…</view>
+    <empty wx:elif="{{matches.length === 0}}" text="暂无疑似匹配" />
+    <view wx:else>
+      <view class="match-row" wx:for="{{matches}}" wx:key="id" bindtap="goMatch" data-id="{{item.id}}">
+        <view class="flex-1">
+          <view class="flex-row">
+            <text class="tag {{item.kind === 'LOST' ? 'tag-warm' : 'tag-success'}}">{{item.kindText}}</text>
+            <view class="t-bold ellipsis flex-1">{{item.title}}</view>
+          </view>
+          <view class="t-tip" style="margin-top:6rpx">
+            匹配理由：{{item.reason || item.matchReason || '类别与时间地点相近'}}
+          </view>
+          <view class="t-tip">{{item.timeText}}</view>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作区 -->
+  <view class="card">
+    <!-- 认领人 -->
+    <block wx:if="{{!isMine}}">
+      <button
+        class="btn btn-block"
+        wx:if="{{item.status === 'OPEN'}}"
+        bindtap="openClaim"
+      >{{item.contactShown ? '申请认领' : '申请认领（联系发布者）'}}</button>
+      <view wx:else class="t-tip" style="text-align:center">当前状态（{{item.statusText}}）暂不接受认领</view>
+    </block>
+
+    <!-- 发布者 -->
+    <block wx:else>
+      <view class="t-brand" style="margin-bottom:16rpx">我发布的信息</view>
+      <button class="btn btn-ghost btn-block claim-btn" bindtap="openClaims">
+        查看认领申请（{{claims.length}}）
+      </button>
+      <view class="owner-actions" wx:if="{{item.status === 'OPEN' || item.status === 'MATCHED'}}">
+        <button class="btn btn-sm owner-btn" bindtap="markStatus" data-status="DONE">✓ 标记完成</button>
+        <button class="btn btn-sm btn-plain owner-btn" bindtap="markStatus" data-status="CLOSED">撤销</button>
+      </view>
+      <button class="btn btn-sm btn-del delete-btn" bindtap="removeItem">删除信息</button>
+    </block>
+  </view>
+
+  <!-- 认领申请弹层 -->
+  <view class="mask" wx:if="{{showClaim}}" bindtap="closeClaim">
+    <view class="popup" catchtap="noop">
+      <view class="p-title">申请认领</view>
+      <view class="form-item">
+        <text class="form-label">物品特征凭证 *</text>
+        <textarea class="form-textarea" placeholder="描述只有你知道的细节：颜色、贴纸、划痕、内容物等" value="{{proofDesc}}" bindinput="onProof" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">你的联系方式 *</text>
+        <input class="form-input" placeholder="手机 / 微信 / QQ" value="{{claimContact}}" bindinput="onClaimContact" />
+      </view>
+      <view class="t-tip">提交后发布者会审核你的凭证并回复</view>
+      <view class="p-actions">
+        <button class="btn btn-plain p-btn" bindtap="closeClaim">取消</button>
+        <button class="btn p-btn {{submittingClaim ? 'btn-disabled' : ''}}" bindtap="submitClaim">
+          {{submittingClaim ? '提交中…' : '提交申请'}}
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 认领列表弹层（发布者） -->
+  <view class="mask" wx:if="{{showClaims}}" bindtap="closeClaims">
+    <view class="popup" catchtap="noop">
+      <view class="p-title">认领申请（{{claims.length}}）</view>
+      <view wx:if="{{loadingClaims}}" class="t-tip">加载中…</view>
+      <empty wx:elif="{{claims.length === 0}}" text="还没有认领申请" />
+      <view wx:else class="claim-item" wx:for="{{claims}}" wx:key="id">
+        <view class="flex-between">
+          <view class="t-bold">{{item.claimantName || item.claimantNickname || '同学'}}</view>
+          <text class="tag {{item.status === 'PENDING' ? 'tag-warm' : item.status === 'ACCEPTED' ? 'tag-success' : 'tag-gray'}}">{{item.statusText}}</text>
+        </view>
+        <view class="t-sub" style="margin-top:10rpx">凭证：{{item.proofDesc}}</view>
+        <view class="t-tip">联系方式：{{item.contact}} · {{item.timeText}}</view>
+        <view class="claim-actions" wx:if="{{item.status === 'PENDING'}}">
+          <button class="btn btn-sm claim-btn2" bindtap="handleClaim" data-id="{{item.id}}" data-action="ACCEPTED">接受</button>
+          <button class="btn btn-sm btn-del claim-btn2" bindtap="handleClaim" data-id="{{item.id}}" data-action="REJECTED">拒绝</button>
+        </view>
+      </view>
+    </view>
+  </view>
+</block>

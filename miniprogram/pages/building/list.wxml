@@ -1,0 +1,35 @@
+<view class="page-header">
+  <view class="header-title">校园楼宇</view>
+  <view class="header-sub">按楼查看教室分布与文字导航</view>
+</view>
+
+<view class="list-wrap header-overlap">
+  <skeleton wx:if="{{loading}}" type="card" />
+  <empty
+    wx:elif="{{error}}"
+    mode="error"
+    sub="接口异常或网络不畅"
+    btnText="重新加载"
+    bind:action="retry"
+  />
+  <empty
+    wx:elif="{{list.length === 0}}"
+    text="暂无楼宇数据"
+    sub="去教室搜索页按条件查找"
+    btnText="去搜教室"
+    bind:action="goSearch"
+  />
+  <block wx:else>
+    <view class="b-card" wx:for="{{list}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+      <view class="b-badge">{{item.code || '楼'}}</view>
+      <view class="flex-1">
+        <view class="t-title ellipsis">{{item.name || '未命名楼宇'}}</view>
+        <view class="t-tip" style="margin-top:6rpx">
+          {{item.campus || ''}}{{item.floorText ? ' · ' + item.floorText : ''}}{{item.classroomText ? ' · ' + item.classroomText : ''}}
+        </view>
+        <view class="t-tip ellipsis" wx:if="{{item.locationDesc}}" style="margin-top:4rpx">📍 {{item.locationDesc}}</view>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+  </block>
+</view>

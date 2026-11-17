@@ -1,0 +1,90 @@
+<!-- 未登录 -->
+<empty
+  wx:if="{{!hasToken}}"
+  mode="empty"
+  text="登录后查看失物招领"
+  btnText="去登录"
+  bind:action="goLogin"
+/>
+<block wx:else>
+  <!-- 搜索栏 + 发布 -->
+  <view class="top-bar">
+    <view class="search-input-wrap">
+      <text class="s-icon">🔍</text>
+      <input
+        class="s-input"
+        placeholder="搜索物品名称 / 描述"
+        placeholder-class="s-placeholder"
+        value="{{keyword}}"
+        confirm-type="search"
+        bindconfirm="onKeywordConfirm"
+        bindinput="onKeywordInput"
+      />
+      <text class="s-clear" wx:if="{{keyword}}" catchtap="clearKeyword">✕</text>
+    </view>
+    <view class="pub-btn" bindtap="goPublish">＋ 发布</view>
+  </view>
+
+  <!-- kind tab -->
+  <view class="kind-tabs">
+    <view
+      class="k-tab {{kindIndex === index ? 'k-tab-on' : ''}}"
+      wx:for="{{kindTabs}}"
+      wx:key="value"
+      data-index="{{index}}"
+      bindtap="onKind"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- 筛选条 -->
+  <view class="filter-bar">
+    <picker range="{{categories}}" range-key="label" value="{{catIndex}}" bindchange="onCat">
+      <view class="f-item">{{categories[catIndex].label}} ▾</view>
+    </picker>
+    <picker range="{{buildings}}" range-key="name" value="{{buildingIndex}}" bindchange="onBuilding">
+      <view class="f-item">{{buildingIndex >= 0 ? buildings[buildingIndex].name : '全部楼宇'}} ▾</view>
+    </picker>
+  </view>
+
+  <!-- 列表 -->
+  <view class="list-wrap">
+    <skeleton wx:if="{{loading}}" type="card" />
+    <empty
+      wx:elif="{{error}}"
+      mode="error"
+      sub="接口异常或网络不畅"
+      btnText="重新加载"
+      bind:action="retry"
+    />
+    <empty
+      wx:elif="{{list.length === 0}}"
+      mode="search"
+      text="暂无相关物品"
+      sub="换个筛选条件，或发布一条信息"
+    />
+    <block wx:else>
+      <view class="lf-card" wx:for="{{list}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+        <image wx:if="{{item.cover}}" class="lf-thumb" src="{{item.cover}}" mode="aspectFill" />
+        <view wx:else class="lf-thumb lf-thumb-ph">📦</view>
+        <view class="flex-1">
+          <view class="flex-between">
+            <view class="t-bold ellipsis flex-1">{{item.title}}</view>
+            <text class="tag {{item.kind === 'LOST' ? 'tag-warm' : 'tag-success'}}">{{item.kind === 'LOST' ? '失物' : '招领'}}</text>
+          </view>
+          <view class="t-tip" style="margin-top:8rpx">
+            {{item.category || '其他'}}{{item.locationDesc ? ' · ' + item.locationDesc : ''}}
+          </view>
+          <view class="lf-meta">
+            <text class="tag tag-gray">{{item.statusText}}</text>
+            <text class="t-tip">{{item.timeText}}</text>
+            <text class="t-tip">👁 {{item.viewCount || 0}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="load-more t-tip" wx:if="{{hasMore}}" bindtap="loadMore">
+        {{loadingMore ? '加载中…' : '上拉加载更多'}}
+      </view>
+      <view class="load-more t-tip" wx:else>— 没有更多了 —</view>
+    </block>
+  </view>
+</block>

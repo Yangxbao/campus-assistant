@@ -1,0 +1,52 @@
+<empty
+  wx:if="{{!hasToken}}"
+  mode="empty"
+  text="登录后查看我的消息"
+  btnText="去登录"
+  bind:action="goLogin"
+/>
+<block wx:else>
+  <view class="top-row">
+    <view class="t-sub flex-1">点击消息可查看关联内容</view>
+    <view class="readall" bindtap="readAll">全部已读</view>
+  </view>
+
+  <view class="list-wrap">
+    <skeleton wx:if="{{loading}}" type="card" />
+    <empty
+      wx:elif="{{error}}"
+      mode="error"
+      sub="接口异常或网络不畅"
+      btnText="重新加载"
+      bind:action="retry"
+    />
+    <empty
+      wx:elif="{{list.length === 0}}"
+      text="暂无消息"
+      sub="审核结果、认领回复都会在这里通知你"
+    />
+    <block wx:else>
+      <view
+        class="msg-card {{item.isRead === 0 || item.isRead === false ? 'msg-unread' : ''}}"
+        wx:for="{{list}}"
+        wx:key="id"
+        data-index="{{index}}"
+        bindtap="onTapMessage"
+      >
+        <view class="msg-icon">{{item.icon}}</view>
+        <view class="flex-1">
+          <view class="flex-between">
+            <view class="t-bold ellipsis flex-1">{{item.title}}</view>
+            <view class="unread-dot" wx:if="{{item.isRead === 0 || item.isRead === false}}"></view>
+          </view>
+          <view class="t-sub msg-content">{{item.content}}</view>
+          <view class="t-tip">{{item.timeText}}</view>
+        </view>
+      </view>
+      <view class="load-more t-tip" wx:if="{{hasMore}}" bindtap="loadMore">
+        {{loadingMore ? '加载中…' : '上拉加载更多'}}
+      </view>
+      <view class="load-more t-tip" wx:else>— 没有更多了 —</view>
+    </block>
+  </view>
+</block>

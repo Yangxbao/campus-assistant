@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "拍照导入课表",
+  "usingComponents": {
+    "empty": "/components/empty/empty"
+  }
+}

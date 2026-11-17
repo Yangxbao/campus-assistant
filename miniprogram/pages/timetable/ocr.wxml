@@ -1,0 +1,40 @@
+<view class="card intro-card">
+  <view class="card-title">📷 拍照导入课程表</view>
+  <view class="t-sub">1. 拍摄或选择一张清晰的课表照片（教务系统截图更佳）</view>
+  <view class="t-sub" style="margin-top:8rpx">2. 系统自动识别课程后，需要你在校正页逐条核对确认</view>
+  <view class="t-tip" style="margin-top:8rpx">识别结果不会直接写入课表，确认后才保存</view>
+</view>
+
+<view class="card">
+  <view class="img-area" bindtap="chooseImage">
+    <image wx:if="{{imgPath}}" class="preview" src="{{imgPath}}" mode="aspectFit" />
+    <view wx:else class="placeholder">
+      <view class="ph-icon">🖼</view>
+      <view class="t-sub">点击选择课表照片</view>
+    </view>
+  </view>
+
+  <view class="status-row" wx:if="{{taskId && !done}}">
+    <view class="spinner"></view>
+    <text class="t-sub">{{statusText}}</text>
+  </view>
+
+  <view class="err-box" wx:if="{{errorMsg}}">
+    <text class="t-danger">⚠️ {{errorMsg}}</text>
+  </view>
+
+  <view class="btn-wrap">
+    <button
+      wx:if="{{imgPath && !taskId}}"
+      class="btn btn-block {{uploading ? 'btn-disabled' : ''}}"
+      bindtap="startOcr"
+    >{{uploading ? '上传中…' : '开始识别'}}</button>
+    <button wx:else class="btn btn-plain btn-block" bindtap="reChoose">重新选图</button>
+  </view>
+</view>
+
+<view class="card">
+  <view class="card-title">没有合适的照片？</view>
+  <view class="t-sub">可以回到课程表手动录入，支持设置周次与单双周</view>
+  <button class="btn btn-ghost btn-block" style="margin-top:20rpx" bindtap="goManual">去手动录入</button>
+</view>

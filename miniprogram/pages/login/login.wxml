@@ -1,0 +1,33 @@
+<view class="login-page">
+  <view class="login-hero">
+    <view class="login-logo">🏫</view>
+    <view class="login-title">湖工商校园助手</view>
+    <view class="login-sub">教室查询 · 课程表 · 失物招领 · 社区共建</view>
+  </view>
+
+  <!-- 开发模式提示条 -->
+  <view class="dev-banner" wx:if="{{devMode}}">⚠️ {{devHint}}</view>
+
+  <view class="login-card card">
+    <block wx:if="{{loggedIn}}">
+      <view class="logged-info">
+        <view class="t-title">已登录</view>
+        <view class="t-sub" wx:if="{{userInfo}}">昵称：{{userInfo.nickname || '同学'}}（ID: {{userInfo.id}}）</view>
+        <view class="t-tip" style="margin-top:8rpx">点击下方按钮进入首页</view>
+      </view>
+      <button class="btn btn-block" bindtap="goHome">进入首页</button>
+    </block>
+    <block wx:else>
+      <view class="login-tip">
+        登录后可使用课程表、失物招领、教室收藏与资料贡献等功能
+      </view>
+      <button class="btn btn-block {{logging ? 'btn-disabled' : ''}}" bindtap="onLogin" disabled="{{logging}}">
+        {{logging ? '登录中…' : '微信一键登录'}}
+      </button>
+    </block>
+  </view>
+
+  <view class="login-footer">
+    本项目为学生社区服务项目，非学校官方应用
+  </view>
+</view>

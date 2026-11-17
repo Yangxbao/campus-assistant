@@ -1,0 +1,28 @@
+page { background: var(--bg); }
+
+.list-wrap { padding-bottom: 40rpx; }
+.b-card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28rpx;
+  margin: 0 24rpx 24rpx;
+  display: flex;
+  align-items: center;
+}
+.b-badge {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 20rpx;
+  background: var(--brand-light);
+  color: var(--brand);
+  font-size: 30rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.arrow { color: var(--text-3); font-size: 40rpx; margin-left: 12rpx; }

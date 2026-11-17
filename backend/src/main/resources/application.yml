@@ -1,0 +1,95 @@
+# =====================================================================
+# 湖南工商大学校园助手后端配置（默认值，均可被环境变量覆盖）
+# 本项目为学生社区服务项目，演示数据非真实校园资料。
+# =====================================================================
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+
+spring:
+  application:
+    name: campus-assistant-backend
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DB:campus_assistant}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:campus123}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 4
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 12MB
+  jackson:
+    # 时间统一返回 ISO 字符串 yyyy-MM-dd HH:mm:ss
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+    default-property-inclusion: non_null
+
+mybatis-plus:
+  global-config:
+    banner: false
+    db-config:
+      # 逻辑删除统一 deleted 0/1
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      id-type: auto
+  configuration:
+    map-underscore-to-camel-case: true
+    # 防SQL注入：统一走 #{} 参数绑定，不拼接 SQL
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+# ---------- 业务自定义配置 ----------
+campus:
+  jwt:
+    # 生产必须通过环境变量覆盖为强随机值
+    secret: ${JWT_SECRET:change-me-to-a-long-random-secret-at-least-32-chars}
+    expire-hours: ${JWT_EXPIRE_HOURS:72}
+  upload:
+    dir: ${UPLOAD_DIR:./upload-dir}
+    max-size-mb: ${UPLOAD_MAX_SIZE_MB:8}
+    # 允许的图片格式
+    allowed-ext: jpg,jpeg,png,webp
+  wx:
+    appid: ${WX_APPID:}
+    secret: ${WX_SECRET:}
+    timetable-template-id: ${WX_TIMETABLE_TEMPLATE_ID:}
+  ocr:
+    enabled: ${OCR_ENABLED:false}
+    http-url: ${OCR_HTTP_URL:}
+    http-token: ${OCR_HTTP_TOKEN:}
+    text-field: ${OCR_HTTP_TEXT_FIELD:data.text}
+  crypto:
+    key: ${CRYPTO_KEY:change-me-crypto-key-16bytes!!}
+  qr:
+    base-url: ${QR_BASE_URL:https://example-campus.local/qr}
+  redis:
+    # Redis 相关键前缀与开关
+    classroom-cache-minutes: 5
+  lost:
+    expire-days: 30
+
+logging:
+  level:
+    com.campus.assistant: info

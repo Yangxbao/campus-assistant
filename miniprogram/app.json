@@ -1,0 +1,69 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/login/login",
+    "pages/classroom/search",
+    "pages/classroom/detail",
+    "pages/building/list",
+    "pages/building/detail",
+    "pages/timetable/index",
+    "pages/timetable/ocr",
+    "pages/timetable/correct",
+    "pages/lostfound/list",
+    "pages/lostfound/publish",
+    "pages/lostfound/detail",
+    "pages/profile/index",
+    "pages/profile/favorites",
+    "pages/profile/my-items",
+    "pages/profile/contributions",
+    "pages/profile/messages",
+    "pages/profile/settings"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#3D7EFF",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "湖工商校园助手",
+    "backgroundColor": "#F5F7FA",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#9AA1AC",
+    "selectedColor": "#3D7EFF",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "assets/tabbar/home.png",
+        "selectedIconPath": "assets/tabbar/home-active.png"
+      },
+      {
+        "pagePath": "pages/classroom/search",
+        "text": "教室",
+        "iconPath": "assets/tabbar/classroom.png",
+        "selectedIconPath": "assets/tabbar/classroom-active.png"
+      },
+      {
+        "pagePath": "pages/timetable/index",
+        "text": "课程表",
+        "iconPath": "assets/tabbar/timetable.png",
+        "selectedIconPath": "assets/tabbar/timetable-active.png"
+      },
+      {
+        "pagePath": "pages/lostfound/list",
+        "text": "失物招领",
+        "iconPath": "assets/tabbar/lostfound.png",
+        "selectedIconPath": "assets/tabbar/lostfound-active.png"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的",
+        "iconPath": "assets/tabbar/profile.png",
+        "selectedIconPath": "assets/tabbar/profile-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

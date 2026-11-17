@@ -1,0 +1,26 @@
+page { background: var(--bg); }
+
+.guide-btn { margin-top: 20rpx; }
+.guide-box {
+  margin-top: 20rpx;
+  background: var(--brand-light);
+  border-radius: 12rpx;
+  padding: 24rpx;
+  font-size: 26rpx;
+  color: var(--text-2);
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.room-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+.room-chip {
+  width: calc(50% - 10rpx);
+  box-sizing: border-box;
+  background: #F6F8FB;
+  border-radius: 12rpx;
+  padding: 18rpx 20rpx;
+  margin: 5rpx;
+}

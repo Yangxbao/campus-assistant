@@ -1,0 +1,55 @@
+page { background: var(--bg); }
+
+.status-tabs {
+  background: #fff;
+  display: flex;
+  padding: 0 16rpx;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.s-tab {
+  padding: 22rpx 22rpx;
+  font-size: 27rpx;
+  color: var(--text-2);
+  border-bottom: 6rpx solid transparent;
+  flex-shrink: 0;
+}
+.s-tab-on {
+  color: var(--brand);
+  font-weight: 600;
+  border-bottom-color: var(--brand);
+}
+
+.list-wrap { padding: 16rpx 0 40rpx; }
+.mi-card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24rpx;
+  margin: 0 24rpx 24rpx;
+  display: flex;
+  align-items: center;
+}
+.mi-thumb {
+  width: 130rpx;
+  height: 130rpx;
+  border-radius: 12rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+  background: #F0F2F5;
+}
+.mi-thumb-ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52rpx;
+}
+.mi-meta {
+  display: flex;
+  align-items: center;
+  margin-top: 10rpx;
+  flex-wrap: wrap;
+}
+.mi-meta .t-tip { margin-left: 14rpx; }
+.arrow { color: var(--text-3); font-size: 40rpx; margin-left: 8rpx; }
+.load-more { text-align: center; padding: 20rpx 0 40rpx; }

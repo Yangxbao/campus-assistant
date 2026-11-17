@@ -1,0 +1,52 @@
+<skeleton wx:if="{{loading}}" type="detail" />
+<empty
+  wx:elif="{{error}}"
+  mode="error"
+  sub="接口异常或网络不畅"
+  btnText="重新加载"
+  bind:action="retry"
+/>
+<block wx:else>
+  <view class="page-header">
+    <view class="header-title">{{b.name || '楼宇详情'}}</view>
+    <view class="header-sub">
+      {{b.code || ''}}{{b.campus ? ' · ' + b.campus : ''}}{{b.floorsCount != null ? ' · ' + b.floorsCount + '层' : ''}}
+    </view>
+  </view>
+
+  <view class="card header-overlap">
+    <view class="t-sub" wx:if="{{b.locationDesc}}">📍 {{b.locationDesc}}</view>
+    <view class="t-sub" wx:if="{{b.description}}" style="margin-top:8rpx">{{b.description}}</view>
+    <button class="btn btn-ghost guide-btn" bindtap="toggleGuide">
+      {{loadingGuide ? '加载中…' : (showGuide ? '收起文字导航' : '🧭 查看文字导航')}}
+    </button>
+    <view class="guide-box" wx:if="{{showGuide}}">
+      <text>{{guideText}}</text>
+    </view>
+  </view>
+
+  <empty
+    wx:if="{{floors.length === 0}}"
+    text="暂无楼层教室数据"
+    sub="可到教室搜索页查找"
+  />
+
+  <view class="card" wx:for="{{floors}}" wx:key="floorNo" wx:for-item="floor">
+    <view class="card-title">{{floor.floorLabel}}</view>
+    <view class="t-tip" wx:if="{{floor.description}}" style="margin-bottom:12rpx">{{floor.description}}</view>
+    <empty wx:if="{{!floor.classrooms || floor.classrooms.length === 0}}" text="该层暂无已收录教室" />
+    <view class="room-grid" wx:else>
+      <view
+        class="room-chip"
+        wx:for="{{floor.classrooms}}"
+        wx:key="id"
+        wx:for-item="room"
+        bindtap="goClassroom"
+        data-id="{{room.id}}"
+      >
+        <view class="t-bold ellipsis">{{room.roomNo}}{{room.name ? ' ' + room.name : ''}}</view>
+        <view class="t-tip">{{room.typeText}}</view>
+      </view>
+    </view>
+  </view>
+</block>

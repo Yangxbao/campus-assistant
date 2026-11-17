@@ -1,0 +1,34 @@
+# ---- Java 后端 ----
+backend/target/
+backend/upload-dir/
+backend/*.iml
+*.class
+
+# ---- 管理后台 ----
+admin/node_modules/
+admin/dist/
+admin/*.local
+
+# ---- 小程序 ----
+miniprogram/**/.DS_Store
+
+# ---- IDE ----
+.idea/
+*.iml
+.vscode/
+.run/
+
+# ---- 本机交接文档（含本机路径/密码，不上传） ----
+HANDOFF.md
+PROGRESS.md
+
+# ---- 环境变量（真实密钥不入库，只提交 .env.example） ----
+.env
+.env.local
+
+# ---- 其他 ----
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+test-photo.png

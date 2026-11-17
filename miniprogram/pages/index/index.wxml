@@ -1,0 +1,138 @@
+<view class="page-header">
+  <view class="header-title">湖工商校园助手</view>
+  <view class="header-sub">学生社区共建 · 非官方应用</view>
+  <!-- 搜索框：跳教室搜索页并带关键词 -->
+  <view class="search-box" bindtap="goSearch">
+    <text class="search-icon">🔍</text>
+    <input
+      class="search-input"
+      placeholder="搜索教学楼 / 教室编号"
+      placeholder-class="search-placeholder"
+      value="{{keyword}}"
+      confirm-type="search"
+      bindconfirm="goSearch"
+      bindinput="onSearchInput"
+      catchtap="noop"
+    />
+    <view class="search-btn">搜索</view>
+  </view>
+</view>
+
+<!-- 功能入口 -->
+<view class="card header-overlap">
+  <view class="grid-4">
+    <view class="grid-item" bindtap="goClassroomSearch">
+      <view class="grid-icon" style="background:#EAF1FF">🏫</view>
+      <view class="grid-text">教室查询</view>
+    </view>
+    <view class="grid-item" bindtap="goTimetable">
+      <view class="grid-icon" style="background:#FFF3E6">📅</view>
+      <view class="grid-text">我的课程表</view>
+    </view>
+    <view class="grid-item" bindtap="goLostfound">
+      <view class="grid-icon" style="background:#E8F8EF">🔍</view>
+      <view class="grid-text">失物招领</view>
+    </view>
+    <view class="grid-item" bindtap="goBuildings">
+      <view class="grid-icon" style="background:#F3EDFF">🏢</view>
+      <view class="grid-text">校园楼宇</view>
+    </view>
+  </view>
+  <view class="divider"></view>
+  <view class="flex-row sub-entries">
+    <view class="sub-entry flex-1" bindtap="goFavorites">
+      <text>⭐ 收藏教室</text>
+    </view>
+    <view class="sub-entry flex-1" bindtap="goContribute">
+      <text>✋ 信息贡献</text>
+    </view>
+    <view class="sub-entry flex-1 flex-between" bindtap="goMessages">
+      <text>🔔 我的消息</text>
+      <text class="badge-dot" wx:if="{{unreadCount > 0}}">{{unreadCount > 99 ? '99+' : unreadCount}}</text>
+    </view>
+  </view>
+</view>
+
+<!-- 未登录提示 -->
+<view class="card login-cta" wx:if="{{!hasToken}}">
+  <view class="flex-between">
+    <view class="flex-1">
+      <view class="t-bold">登录后体验完整功能</view>
+      <view class="t-tip">课程表、收藏、失物认领等你解锁</view>
+    </view>
+    <button class="btn btn-sm" bindtap="goLogin">去登录</button>
+  </view>
+</view>
+
+<!-- 公告 -->
+<view class="card" wx:if="{{announcements.length > 0}}">
+  <view class="card-title">📢 公告</view>
+  <view class="announce-item" wx:for="{{announcements}}" wx:key="id" bindtap="onShowAnnounce" data-item="{{item}}">
+    <view class="ellipsis t-sub">{{item.title}}</view>
+    <view class="t-tip">{{item.content}}</view>
+  </view>
+</view>
+
+<!-- 最近使用教室 -->
+<view class="card">
+  <view class="card-title">🕘 最近使用</view>
+  <skeleton wx:if="{{loadingRecent}}" type="grid" />
+  <empty wx:elif="{{failRecent}}" mode="error" sub="点击重试" btnText="重新加载" bind:action="retryRecent" />
+  <empty wx:elif="{{recentClassrooms.length === 0}}" text="还没有浏览记录" sub="去教室查询看看吧" btnText="去查教室" bind:action="goClassroomSearch" />
+  <view wx:else class="room-chips">
+    <view class="room-chip" wx:for="{{recentClassrooms}}" wx:key="id" bindtap="goClassroom" data-id="{{item.id}}">
+      <view class="ellipsis t-bold">{{item.buildingName || ''}} {{item.roomNo || item.name}}</view>
+      <view class="t-tip">{{item.floorNo != null ? item.floorNo + '层' : ''}}</view>
+    </view>
+  </view>
+</view>
+
+<!-- 最新更新教室 -->
+<view class="card">
+  <view class="card-title">🆕 最新更新</view>
+  <skeleton wx:if="{{loadingLatest}}" type="card" />
+  <empty wx:elif="{{failLatest}}" mode="error" btnText="重新加载" bind:action="retryLatest" />
+  <empty wx:elif="{{latestClassrooms.length === 0}}" text="暂无更新记录" />
+  <view wx:else>
+    <view class="room-row" wx:for="{{latestClassrooms}}" wx:key="id" bindtap="goClassroom" data-id="{{item.id}}">
+      <view class="flex-1">
+        <view class="ellipsis t-bold">{{item.buildingName || ''}} {{item.roomNo || item.name}}</view>
+        <view class="t-tip">更新于 {{item.updatedText}}</view>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+</view>
+
+<!-- 最新失物 -->
+<view class="card">
+  <view class="card-title">🧳 最新失物招领</view>
+  <skeleton wx:if="{{loadingLost}}" type="card" />
+  <empty wx:elif="{{failLost}}" mode="error" btnText="重新加载" bind:action="retryLost" />
+  <empty wx:elif="{{lostItems.length === 0}}" text="暂无失物信息" btnText="去发布" bind:action="goLostfound" />
+  <view wx:else>
+    <view class="lost-item flex-row" wx:for="{{lostItems}}" wx:key="id" bindtap="goLostDetail" data-id="{{item.id}}">
+      <image class="lost-thumb" src="{{item.cover}}" mode="aspectFill" wx:if="{{item.cover}}" />
+      <view class="lost-thumb lost-thumb-ph" wx:else>📦</view>
+      <view class="flex-1">
+        <view class="ellipsis t-bold">{{item.title}}</view>
+        <view class="flex-row lost-meta">
+          <text class="tag {{item.kind === 'LOST' ? 'tag-warm' : 'tag-success'}}">{{item.kindText}}</text>
+          <text class="tag tag-gray">{{item.statusText}}</text>
+        </view>
+        <view class="t-tip">{{item.timeText}}</view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 公告弹层 -->
+<view class="announce-mask" wx:if="{{showAnnounce}}" bindtap="closeAnnounce">
+  <view class="announce-popup" catchtap="noop">
+    <view class="announce-title">📢 {{showAnnounce.title}}</view>
+    <scroll-view scroll-y class="announce-body">
+      <text>{{showAnnounce.content}}</text>
+    </scroll-view>
+    <button class="btn btn-block" bindtap="closeAnnounce">我知道了</button>
+  </view>
+</view>

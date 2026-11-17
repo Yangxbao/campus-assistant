@@ -1,0 +1,115 @@
+<!-- 搜索栏 -->
+<view class="search-bar">
+  <view class="search-input-wrap">
+    <text class="s-icon">🔍</text>
+    <input
+      class="s-input"
+      placeholder="搜索教学楼 / 教室编号"
+      placeholder-class="s-placeholder"
+      value="{{keyword}}"
+      confirm-type="search"
+      bindconfirm="onKeywordConfirm"
+      bindinput="onKeywordInput"
+    />
+    <text class="s-clear" wx:if="{{keyword}}" catchtap="clearKeyword">✕</text>
+  </view>
+  <view class="s-filter-btn {{activeCount > 0 ? 's-filter-on' : ''}}" bindtap="toggleFilter">
+    筛选{{activeCount > 0 ? '·' + activeCount : ''}}
+  </view>
+</view>
+
+<!-- 排序 -->
+<view class="sort-bar">
+  <picker range="{{sorts}}" range-key="label" value="{{sortIndex}}" bindchange="onSort">
+    <view class="sort-item">排序：{{sorts[sortIndex].label}} ▾</view>
+  </picker>
+</view>
+
+<!-- 筛选面板 -->
+<view class="filter-panel" wx:if="{{showFilter}}">
+  <view class="f-row">
+    <text class="f-label">教学楼</text>
+    <picker range="{{buildings}}" range-key="name" value="{{buildingIndex}}" bindchange="onBuilding">
+      <view class="f-picker">{{buildingIndex >= 0 ? buildings[buildingIndex].name : '全部'}} ▾</view>
+    </picker>
+  </view>
+  <view class="f-row">
+    <text class="f-label">楼层</text>
+    <input class="f-input" type="number" placeholder="如 1 / 2 / -1" value="{{floorNo}}" bindinput="onFloorNo" />
+    <text class="f-label">编号</text>
+    <input class="f-input" placeholder="如 301" value="{{roomNo}}" bindinput="onRoomNo" />
+  </view>
+  <view class="f-row">
+    <text class="f-label">类型</text>
+    <picker range="{{types}}" range-key="label" value="{{typeIndex}}" bindchange="onType">
+      <view class="f-picker">{{types[typeIndex].label}} ▾</view>
+    </picker>
+  </view>
+  <view class="f-label" style="margin-top:8rpx">设备条件</view>
+  <view class="f-chips">
+    <view
+      class="f-chip {{item.on ? 'f-chip-on' : ''}}"
+      wx:for="{{deviceFilters}}"
+      wx:key="key"
+      data-index="{{index}}"
+      bindtap="onDevice"
+    >{{item.label}}</view>
+  </view>
+  <view class="f-row" style="margin-top:16rpx">
+    <text class="f-label">插座≥</text>
+    <input class="f-input" type="number" placeholder="最少数量" value="{{hasSocketMin}}" bindinput="onSocketMin" />
+  </view>
+  <view class="f-row" style="margin-top:16rpx">
+    <text class="f-label">安静度：{{minQuietLabel}}</text>
+    <slider class="f-slider" min="0" max="5" step="1" value="{{minQuiet}}" activeColor="#3D7EFF" bindchange="onQuietChange" />
+  </view>
+  <view class="f-row flex-between" style="margin-top:16rpx">
+    <text class="f-label">适合自习（有插座 + 安静≥4）</text>
+    <switch checked="{{suitableForSelfStudy}}" color="#3D7EFF" bindchange="onSelfStudy" />
+  </view>
+  <view class="f-actions">
+    <button class="btn btn-ghost f-btn" bindtap="resetFilter">重置</button>
+    <button class="btn f-btn" bindtap="applyFilter">确定</button>
+  </view>
+</view>
+
+<!-- 列表 -->
+<view class="list-wrap">
+  <skeleton wx:if="{{loading}}" type="card" />
+  <empty
+    wx:elif="{{error}}"
+    mode="error"
+    sub="接口异常或网络不畅"
+    btnText="重新加载"
+    bind:action="retry"
+  />
+  <empty
+    wx:elif="{{list.length === 0}}"
+    mode="search"
+    sub="换个条件试试"
+  />
+  <block wx:else>
+    <view class="room-card" wx:for="{{list}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+      <view class="flex-between">
+        <view class="t-title">{{item.buildingName || ''}} {{item.roomNo}}{{item.name ? ' · ' + item.name : ''}}</view>
+        <text class="tag">{{item.typeText}}</text>
+      </view>
+      <view class="t-tip" style="margin-top:8rpx">
+        {{item.floorNo != null ? item.floorNo + '层 · ' : ''}}{{item.seatCount ? item.seatCount + '座 · ' : ''}}更新于 {{item.updatedText}}
+      </view>
+      <view class="device-tags">
+        <text class="tag tag-gray" wx:if="{{item.hasAc}}">❄️ 空调</text>
+        <text class="tag tag-gray" wx:if="{{item.hasProjector}}">📽 投影</text>
+        <text class="tag tag-gray" wx:if="{{item.hasPc}}">💻 电脑</text>
+        <text class="tag tag-gray" wx:if="{{item.hasWhiteboard}}">📝 白板</text>
+        <text class="tag tag-gray" wx:if="{{item.hasWifi}}">📶 WiFi</text>
+        <text class="tag tag-warm" wx:if="{{item.socketCount}}">🔌 插座×{{item.socketCount}}</text>
+        <text class="tag tag-success" wx:if="{{item.envScoreQuiet}}">🌙 安静{{item.envScoreQuiet}}星</text>
+      </view>
+    </view>
+    <view class="load-more t-tip" wx:if="{{hasMore}}" bindtap="loadMore">
+      {{loadingMore ? '加载中…' : '上拉加载更多'}}
+    </view>
+    <view class="load-more t-tip" wx:else>— 没有更多了 —</view>
+  </block>
+</view>

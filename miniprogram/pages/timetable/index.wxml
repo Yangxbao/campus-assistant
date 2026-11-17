@@ -1,0 +1,188 @@
+<!-- 未登录 -->
+<empty
+  wx:if="{{!hasToken}}"
+  mode="empty"
+  text="登录后查看我的课程表"
+  sub="支持手动录入与拍照导入"
+  btnText="去登录"
+  bind:action="goLogin"
+/>
+
+<block wx:else>
+  <!-- 顶部：周次切换 + 今日概览 -->
+  <view class="page-header">
+    <view class="flex-between">
+      <view class="header-title">{{semesterName}}</view>
+      <view class="header-actions">
+        <view class="h-btn" bindtap="goOcr">📷 拍照导入</view>
+        <view class="h-btn" bindtap="openAdd">＋ 添加课程</view>
+      </view>
+    </view>
+    <view class="week-bar">
+      <view class="w-btn" bindtap="prevWeek">‹</view>
+      <picker range="{{weekOptions}}" value="{{weekIndex}}" bindchange="onWeekPick">
+        <view class="w-text">第 {{week}} 周{{isThisWeek ? '（本周）' : ''}} ▾</view>
+      </picker>
+      <view class="w-btn" bindtap="nextWeek">›</view>
+      <view class="w-quick {{week === currentWeek ? 'w-quick-on' : ''}}" bindtap="goCurrentWeek">本周</view>
+      <view class="w-quick" bindtap="jumpType" data-type="ODD">单周</view>
+      <view class="w-quick" bindtap="jumpType" data-type="EVEN">双周</view>
+    </view>
+    <view class="next-tip" wx:if="{{nextCourse}}">
+      ⏰ 下一节：{{nextCourse.courseName}} · {{nextCourse.roomRawText || nextCourse.classroomName || '教室待定'}} {{nextText ? '· ' + nextText : ''}}
+    </view>
+  </view>
+
+  <skeleton wx:if="{{loading}}" type="detail" />
+  <empty
+    wx:elif="{{error}}"
+    mode="error"
+    sub="课表加载失败"
+    btnText="重新加载"
+    bind:action="retry"
+  />
+  <block wx:else>
+    <!-- 今日课程 -->
+    <view class="card header-overlap">
+      <view class="card-title">今日课程</view>
+      <empty wx:if="{{todayCourses.length === 0}}" text="今天没有课" sub="好好休息吧" />
+      <view wx:else>
+        <view class="today-row flex-row" wx:for="{{todayCourses}}" wx:key="id">
+          <view class="today-bar" style="background:{{item.color}}"></view>
+          <view class="flex-1">
+            <view class="t-bold ellipsis">{{item.courseName}}</view>
+            <view class="t-tip">{{item.timeText}} · {{item.roomRawText || item.classroomName || '教室待定'}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 周视图网格 -->
+    <view class="grid-card">
+      <view class="grid-head">
+        <view class="corner"></view>
+        <view class="day-label {{item.isToday ? 'day-today' : ''}}" wx:for="{{columns}}" wx:key="weekday">
+          周{{item.label}}
+        </view>
+      </view>
+      <view class="grid-body">
+        <view class="time-col">
+          <view class="time-cell" wx:for="{{periods}}" wx:key="periodNo">
+            <view class="time-no">{{item.periodNo}}</view>
+            <view class="time-txt" wx:if="{{item.startTime}}">{{item.startTime}}</view>
+          </view>
+        </view>
+        <view class="day-col {{item.isToday ? 'day-col-today' : ''}}" wx:for="{{columns}}" wx:key="weekday" wx:for-item="col">
+          <view
+            class="cell {{cell.covered ? 'cell-covered' : ''}}"
+            wx:for="{{col.cells}}"
+            wx:for-item="cell"
+            wx:key="p"
+            data-weekday="{{col.weekday}}"
+            data-period="{{cell.p}}"
+            bindtap="onCellCourse"
+          >
+            <view
+              wx:if="{{cell.course}}"
+              class="course-block"
+              style="height:{{cell.course.blockH}}rpx;background:{{cell.course.bg}};color:{{cell.course.color}}"
+            >
+              <view class="course-name ellipsis-2">{{cell.course.courseName}}</view>
+              <view class="course-room ellipsis">{{cell.course.roomRawText || cell.course.classroomName || ''}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="t-tip grid-tip">提示：点击色块查看课程详情，可编辑、删除或跳转教室</view>
+    <view class="t-tip remind-row" bindtap="onRemind">🔔 开启上课提醒</view>
+  </block>
+
+  <!-- 课程详情弹层 -->
+  <view class="mask" wx:if="{{showDetail}}" bindtap="closeDetail">
+    <view class="popup" catchtap="noop">
+      <block wx:if="{{detailCourse}}">
+        <view class="p-title">{{detailCourse.courseName}}</view>
+        <view class="p-row"><text class="p-label">时间</text>{{detailCourse.weekdayText}} 第{{detailCourse.startPeriod}}-{{detailCourse.endPeriod}}节（{{detailCourse.timeText}}）</view>
+        <view class="p-row"><text class="p-label">教师</text>{{detailCourse.teacher || '未填写'}}</view>
+        <view class="p-row"><text class="p-label">周次</text>{{detailCourse.weekText}}</view>
+        <view class="p-row"><text class="p-label">教室</text>{{detailCourse.roomText}}</view>
+        <view class="p-row" wx:if="{{detailCourse.remark}}"><text class="p-label">备注</text>{{detailCourse.remark}}</view>
+        <view class="p-actions">
+          <button class="btn btn-plain p-btn" bindtap="openEdit">编辑</button>
+          <button class="btn p-btn btn-disabled" wx:if="{{!detailCourse.classroomId}}" disabled>去教室</button>
+          <button class="btn p-btn" wx:else bindtap="goClassroom">去教室</button>
+          <button class="btn p-btn btn-del" bindtap="deleteCourse">删除</button>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 手动添加/编辑表单 -->
+  <view class="mask" wx:if="{{showForm}}">
+    <view class="popup popup-form">
+      <view class="p-title">{{editingId ? '编辑课程' : '添加课程'}}</view>
+      <view class="form-item">
+        <text class="form-label">课程名称 *</text>
+        <input class="form-input" placeholder="如 高等数学" value="{{form.courseName}}" data-key="courseName" bindinput="onFormInput" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">教师</text>
+        <input class="form-input" placeholder="选填" value="{{form.teacher}}" data-key="teacher" bindinput="onFormInput" />
+      </view>
+      <view class="form-item form-row2">
+        <view class="form-col">
+          <text class="form-label">星期</text>
+          <picker range="{{weekdayOptions}}" value="{{form.weekday - 1}}" bindchange="onFormWeekday">
+            <view class="form-picker">{{weekdayOptions[form.weekday - 1]}} ▾</view>
+          </picker>
+        </view>
+        <view class="form-col">
+          <text class="form-label">开始节次</text>
+          <picker range="{{periodOptions}}" value="{{form.startPeriod - 1}}" bindchange="onFormStart">
+            <view class="form-picker">第{{form.startPeriod}}节 ▾</view>
+          </picker>
+        </view>
+        <view class="form-col">
+          <text class="form-label">结束节次</text>
+          <picker range="{{periodOptions}}" value="{{form.endPeriod - 1}}" bindchange="onFormEnd">
+            <view class="form-picker">第{{form.endPeriod}}节 ▾</view>
+          </picker>
+        </view>
+      </view>
+      <view class="form-item">
+        <text class="form-label">重复方式</text>
+        <picker range="{{weekTypeOptions}}" range-key="label" value="{{weekTypeIndex}}" bindchange="onFormWeekType">
+          <view class="form-picker">{{weekTypeOptions[weekTypeIndex].label}} ▾</view>
+        </picker>
+      </view>
+      <view class="form-item">
+        <view class="flex-between">
+          <text class="form-label">上课周次（不选默认每周）</text>
+          <text class="t-brand week-all" bindtap="selectAllWeeks">全选</text>
+        </view>
+        <view class="week-chips">
+          <view
+            class="week-chip {{item.on ? 'week-chip-on' : ''}}"
+            wx:for="{{weekChips}}"
+            wx:key="no"
+            data-no="{{item.no}}"
+            bindtap="onWeekChip"
+          >{{item.no}}</view>
+        </view>
+      </view>
+      <view class="form-item">
+        <text class="form-label">教室</text>
+        <input class="form-input" placeholder="如 一教 301（可后补）" value="{{form.roomRawText}}" data-key="roomRawText" bindinput="onFormInput" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">备注</text>
+        <textarea class="form-textarea" placeholder="选填" value="{{form.remark}}" data-key="remark" bindinput="onFormInput" />
+      </view>
+      <view class="p-actions">
+        <button class="btn btn-plain p-btn" bindtap="closeForm">取消</button>
+        <button class="btn p-btn {{saving ? 'btn-disabled' : ''}}" bindtap="submitForm">{{saving ? '保存中…' : '保存'}}</button>
+      </view>
+    </view>
+  </view>
+</block>

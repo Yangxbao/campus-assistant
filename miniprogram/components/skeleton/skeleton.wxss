@@ -1,0 +1,37 @@
+.sk-wrap { padding: 24rpx; }
+.sk-card-sim {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+}
+.sk-row { height: 30rpx; margin-bottom: 22rpx; border-radius: 6rpx; }
+.sk-banner { height: 300rpx; border-radius: 16rpx; margin-bottom: 24rpx; }
+.sk-grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 24rpx;
+}
+.sk-grid-item {
+  width: 320rpx;
+  height: 320rpx;
+  border-radius: 16rpx;
+  margin: 12rpx;
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #EDF0F5;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -30%;
+  width: 30%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.65), transparent);
+  animation: sk-shimmer 1.2s infinite;
+}
+@keyframes sk-shimmer {
+  from { left: -30%; }
+  to { left: 100%; }
+}

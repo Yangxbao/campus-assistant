@@ -1,0 +1,95 @@
+page { background: var(--bg); }
+
+.search-box {
+  margin-top: 28rpx;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 40rpx;
+  display: flex;
+  align-items: center;
+  padding: 8rpx 10rpx 8rpx 28rpx;
+  height: 76rpx;
+  box-sizing: border-box;
+}
+.search-icon { font-size: 30rpx; margin-right: 14rpx; }
+.search-input { flex: 1; font-size: 28rpx; color: var(--text-1); }
+.search-placeholder { color: var(--text-3); font-size: 26rpx; }
+.search-btn {
+  background: var(--brand);
+  color: #fff;
+  font-size: 26rpx;
+  border-radius: 32rpx;
+  padding: 10rpx 32rpx;
+}
+
+.sub-entries { padding-top: 4rpx; }
+.sub-entry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  color: var(--text-2);
+}
+.login-cta { border: 2rpx dashed var(--brand); background: var(--brand-light); }
+
+.announce-item { padding: 10rpx 0; }
+.announce-item + .announce-item { border-top: 2rpx solid var(--line); }
+
+.room-chips {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -8rpx;
+}
+.room-chip {
+  width: 216rpx;
+  margin: 8rpx;
+  background: #F6F8FB;
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+  box-sizing: border-box;
+}
+
+.room-row {
+  padding: 18rpx 0;
+  display: flex;
+  align-items: center;
+}
+.room-row + .room-row { border-top: 2rpx solid var(--line); }
+.arrow { color: var(--text-3); font-size: 36rpx; margin-left: 12rpx; }
+
+.lost-item { padding: 16rpx 0; }
+.lost-item + .lost-item { border-top: 2rpx solid var(--line); }
+.lost-thumb {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 12rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+  background: #F0F2F5;
+}
+.lost-thumb-ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+}
+.lost-meta { margin: 6rpx 0; }
+
+.announce-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 25, 45, 0.55);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx;
+}
+.announce-popup {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 40rpx 32rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+.announce-title { font-size: 32rpx; font-weight: 600; margin-bottom: 20rpx; }
+.announce-body { max-height: 50vh; font-size: 28rpx; color: var(--text-2); line-height: 1.7; margin-bottom: 32rpx; }

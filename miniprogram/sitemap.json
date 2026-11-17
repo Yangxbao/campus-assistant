@@ -1,0 +1,9 @@
+{
+  "desc": "湖南工商大学校园助手小程序 sitemap",
+  "rules": [
+    {
+      "action": "disallow",
+      "page": "*"
+    }
+  ]
+}

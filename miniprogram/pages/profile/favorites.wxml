@@ -1,0 +1,58 @@
+<empty
+  wx:if="{{!hasToken}}"
+  mode="empty"
+  text="登录后查看我的收藏"
+  btnText="去登录"
+  bind:action="goLogin"
+/>
+<block wx:else>
+  <view class="tabs">
+    <view
+      class="tab {{tabIndex === index ? 'tab-on' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="type"
+      data-index="{{index}}"
+      bindtap="switchTab"
+    >{{item.label}}</view>
+  </view>
+
+  <view class="list-wrap">
+    <skeleton wx:if="{{loading}}" type="card" />
+    <empty
+      wx:elif="{{error}}"
+      mode="error"
+      sub="接口异常或网络不畅"
+      btnText="重新加载"
+      bind:action="retry"
+    />
+    <empty
+      wx:elif="{{list.length === 0}}"
+      text="还没有收藏"
+      sub="去逛逛喜欢的教室吧"
+      btnText="去搜教室"
+      bind:action="goSearch"
+    />
+    <block wx:else>
+      <view class="fav-card" wx:for="{{list}}" wx:key="favoriteId">
+        <view class="flex-1" bindtap="goDetail" data-id="{{item.id}}">
+          <view class="t-bold ellipsis">{{item.title}}</view>
+          <view class="t-tip" style="margin-top:6rpx">{{item.sub}}</view>
+          <view class="flex-row" wx:if="{{item.statusText}}" style="margin-top:8rpx">
+            <text class="tag tag-gray">{{item.statusText}}</text>
+            <text class="t-tip" wx:if="{{item.timeText}}">{{item.timeText}}</text>
+          </view>
+        </view>
+        <button
+          class="btn btn-sm btn-del"
+          catchtap="removeFavorite"
+          data-id="{{item.favoriteId}}"
+          data-target="{{item.id}}"
+        >取消收藏</button>
+      </view>
+      <view class="load-more t-tip" wx:if="{{hasMore}}" bindtap="loadMore">
+        {{loadingMore ? '加载中…' : '上拉加载更多'}}
+      </view>
+      <view class="load-more t-tip" wx:else>— 没有更多了 —</view>
+    </block>
+  </view>
+</block>

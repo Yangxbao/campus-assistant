@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "我的失物招领",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "empty": "/components/empty/empty",
+    "skeleton": "/components/skeleton/skeleton"
+  }
+}

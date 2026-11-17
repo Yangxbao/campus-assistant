@@ -1,0 +1,55 @@
+<empty
+  wx:if="{{!hasToken}}"
+  mode="empty"
+  text="登录后查看我的贡献"
+  sub="上传照片、修正资料、上报状态都可以积累贡献值"
+  btnText="去登录"
+  bind:action="goLogin"
+/>
+<block wx:else>
+  <view class="type-tabs">
+    <view
+      class="t-tab {{typeFilter === item.value ? 't-tab-on' : ''}}"
+      wx:for="{{typeTabs}}"
+      wx:key="value"
+      data-value="{{item.value}}"
+      bindtap="onType"
+    >{{item.label}}</view>
+  </view>
+
+  <view class="list-wrap">
+    <skeleton wx:if="{{loading}}" type="card" />
+    <empty
+      wx:elif="{{error}}"
+      mode="error"
+      sub="接口异常或网络不畅"
+      btnText="重新加载"
+      bind:action="retry"
+    />
+    <empty
+      wx:elif="{{list.length === 0}}"
+      text="暂无贡献记录"
+      sub="进教室详情页上传照片 / 修正资料即可贡献"
+    />
+    <block wx:else>
+      <view class="ct-card" wx:for="{{list}}" wx:key="id">
+        <view class="flex-between">
+          <text class="tag">{{item.typeText}}</text>
+          <text
+            class="tag {{item.auditStatus === 'APPROVED' ? 'tag-success' : item.auditStatus === 'REJECTED' ? 'tag-danger' : 'tag-warm'}}"
+            wx:if="{{item.statusText}}"
+          >{{item.statusText}}</text>
+        </view>
+        <view class="t-bold" style="margin-top:14rpx" wx:if="{{item.targetText}}">{{item.targetText}}</view>
+        <view class="t-sub" style="margin-top:6rpx" wx:if="{{item.content || item.newValue || item.description}}">
+          {{item.content || item.newValue || item.description}}
+        </view>
+        <view class="t-tip" style="margin-top:10rpx">{{item.timeText}}</view>
+      </view>
+      <view class="load-more t-tip" wx:if="{{hasMore}}" bindtap="loadMore">
+        {{loadingMore ? '加载中…' : '上拉加载更多'}}
+      </view>
+      <view class="load-more t-tip" wx:else>— 没有更多了 —</view>
+    </block>
+  </view>
+</block>

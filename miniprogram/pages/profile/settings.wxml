@@ -1,0 +1,51 @@
+<empty
+  wx:if="{{!hasToken}}"
+  mode="empty"
+  text="登录后管理账号"
+  btnText="去登录"
+  bind:action="goLogin"
+/>
+<block wx:else>
+  <!-- 头像与昵称 -->
+  <view class="card">
+    <view class="card-title">个人资料</view>
+    <view class="avatar-row" bindtap="changeAvatar">
+      <image wx:if="{{userInfo.avatarUrl}}" class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill" />
+      <view wx:else class="avatar avatar-ph">👤</view>
+      <view class="flex-1">
+        <view class="t-bold">{{uploadingAvatar ? '头像上传中…' : '点击更换头像'}}</view>
+        <view class="t-tip">支持 jpg / png / webp，≤8MB</view>
+      </view>
+    </view>
+    <view class="form-item">
+      <text class="form-label">昵称</text>
+      <view class="flex-row">
+        <input class="form-input flex-1" value="{{nickname}}" bindinput="onNickname" placeholder="给自己起个名字" />
+        <button class="btn btn-sm save-btn {{savingProfile ? 'btn-disabled' : ''}}" bindtap="saveNickname">保存</button>
+      </view>
+    </view>
+    <view class="t-tip" wx:if="{{devMode}}">🧪 当前为开发模式（虚拟 openid）</view>
+  </view>
+
+  <!-- 隐私设置 -->
+  <view class="card">
+    <view class="card-title">隐私设置</view>
+    <view class="flex-between">
+      <view class="flex-1">
+        <view class="t-sub">公开我的手机号</view>
+        <view class="t-tip">关闭后他人无法看到你的手机号</view>
+      </view>
+      <switch checked="{{phoneVisible}}" color="#3D7EFF" bindchange="onPhoneVisible" />
+    </view>
+  </view>
+
+  <!-- 账号操作 -->
+  <view class="card">
+    <view class="card-title">账号</view>
+    <button class="btn btn-plain btn-block op-btn" bindtap="logout">退出登录</button>
+    <button class="btn btn-sm btn-del delete-btn" bindtap="deleteAccount">注销账号</button>
+    <view class="t-tip" style="text-align:center;margin-top:16rpx">
+      注销为不可恢复操作，请谨慎操作
+    </view>
+  </view>
+</block>

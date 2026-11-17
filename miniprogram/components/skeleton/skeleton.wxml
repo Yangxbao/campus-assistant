@@ -1,0 +1,27 @@
+<block wx:if="{{type === 'card'}}">
+  <view class="sk-wrap">
+    <view class="sk-card-sim skeleton" wx:for="{{[0,1,2]}}" wx:key="*this">
+      <view class="sk-row skeleton" style="width: 40%"></view>
+      <view class="sk-row skeleton" style="width: 90%"></view>
+      <view class="sk-row skeleton" style="width: 70%"></view>
+    </view>
+  </view>
+</block>
+
+<block wx:elif="{{type === 'detail'}}">
+  <view class="sk-wrap">
+    <view class="sk-banner skeleton"></view>
+    <view class="sk-card-sim skeleton" wx:for="{{[0,1]}}" wx:key="*this">
+      <view class="sk-row skeleton" style="width: 50%"></view>
+      <view class="sk-row skeleton" style="width: 92%"></view>
+      <view class="sk-row skeleton" style="width: 60%"></view>
+      <view class="sk-row skeleton" style="width: 80%"></view>
+    </view>
+  </view>
+</block>
+
+<block wx:else>
+  <view class="sk-grid">
+    <view class="sk-grid-item skeleton" wx:for="{{[0,1,2,3]}}" wx:key="*this"></view>
+  </view>
+</block>

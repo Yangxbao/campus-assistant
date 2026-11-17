@@ -1,0 +1,29 @@
+page { background: var(--bg); }
+
+.type-tabs {
+  background: #fff;
+  display: flex;
+  padding: 0 24rpx;
+}
+.t-tab {
+  padding: 22rpx 0;
+  margin-right: 48rpx;
+  font-size: 28rpx;
+  color: var(--text-2);
+  border-bottom: 6rpx solid transparent;
+}
+.t-tab-on {
+  color: var(--brand);
+  font-weight: 600;
+  border-bottom-color: var(--brand);
+}
+
+.list-wrap { padding: 16rpx 0 40rpx; }
+.ct-card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 26rpx;
+  margin: 0 24rpx 24rpx;
+}
+.load-more { text-align: center; padding: 20rpx 0 40rpx; }

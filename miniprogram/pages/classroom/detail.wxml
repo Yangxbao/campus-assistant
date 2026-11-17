@@ -1,0 +1,358 @@
+<skeleton wx:if="{{loading}}" type="detail" />
+
+<!-- 加载失败 -->
+<view wx:elif="{{error}}" class="state-block">
+  <view class="state-icon">😵</view>
+  <view class="t-sub">教室信息加载失败</view>
+  <button class="btn btn-sm" style="margin-top:24rpx" bindtap="retry">重新加载</button>
+</view>
+
+<block wx:else>
+  <!-- 顶部信息卡 -->
+  <view class="page-header detail-header">
+    <view class="d-room">{{c.buildingName || ''}} {{c.roomNo}}{{c.name ? ' · ' + c.name : ''}}</view>
+    <view class="d-meta">
+      <text class="d-tag">{{c.typeText}}</text>
+      <text class="d-tag" wx:if="{{c.floorNo != null}}">{{c.floorNo}} 层</text>
+      <text class="d-tag" wx:if="{{c.seatCount}}">{{c.seatCount}} 座</text>
+      <text class="d-tag" wx:if="{{c.envScoreQuiet}}">安静度 {{c.envScoreQuiet}}★</text>
+    </view>
+    <view class="d-updated">资料更新于 {{c.updatedText}} · 数据由社区同学共同维护</view>
+    <view class="d-actions">
+      <view class="d-act {{isFavorite ? 'd-act-on' : ''}}" bindtap="toggleFavorite">{{isFavorite ? '⭐ 已收藏' : '☆ 收藏'}}</view>
+      <view class="d-act" bindtap="openReport">✏️ 更新资料</view>
+      <view class="d-act" bindtap="openUpload">📷 传照片</view>
+      <view class="d-act" bindtap="openMark">🔌 标插座</view>
+    </view>
+  </view>
+
+  <!-- 临时状态卡 -->
+  <view class="card header-overlap" wx:if="{{latestStatus}}">
+    <view class="card-title">⚡ 实时状态（社区用户反馈，非官方数据）</view>
+    <view class="status-line">
+      <view class="status-cell">
+        <view class="status-val {{latestStatus.occupancy === 'FREE' ? 's-free' : latestStatus.occupancy === 'FULL' ? 's-full' : 's-partly'}}">{{latestStatus.occText}}</view>
+        <view class="t-tip">占用情况</view>
+      </view>
+      <view class="status-cell">
+        <view class="status-val">{{latestStatus.quietLevel}}★</view>
+        <view class="t-tip">安静度</view>
+      </view>
+      <view class="status-cell">
+        <view class="status-val">{{latestStatus.acWorking === 1 ? '✅' : latestStatus.acWorking === 0 ? '❌' : '—'}}</view>
+        <view class="t-tip">空调</view>
+      </view>
+      <view class="status-cell">
+        <view class="status-val">{{latestStatus.socketWorking === 1 ? '✅' : latestStatus.socketWorking === 0 ? '❌' : '—'}}</view>
+        <view class="t-tip">插座</view>
+      </view>
+    </view>
+    <view class="t-tip">提交时间 {{latestStatus.timeText}} · 有效期：{{statusExpireText}}（{{latestStatus.expiresAt}} 到期）</view>
+    <view class="t-tip" wx:if="{{latestStatus.occupiedReason}}">占用原因：{{latestStatus.occupiedReason}}</view>
+  </view>
+  <view class="card header-overlap status-empty" wx:else>
+    <view class="flex-between">
+      <view class="flex-1">
+        <view class="t-bold">还没有实时状态</view>
+        <view class="t-tip">在教室的同学可以上报当前状态，帮助大家找座位</view>
+      </view>
+      <button class="btn btn-sm" bindtap="openStatus">上报状态</button>
+    </view>
+  </view>
+
+  <!-- 设备清单 -->
+  <view class="card">
+    <view class="card-title">🧰 设备清单</view>
+    <view class="equip-grid">
+      <view class="equip-item">
+        <text class="equip-icon {{c.hasAc ? 'on' : 'off'}}">❄️</text>
+        <text class="equip-name">空调</text>
+        <text class="equip-state {{c.hasAc ? 'on' : 'off'}}">{{c.hasAc ? '有' : '无'}}</text>
+      </view>
+      <view class="equip-item">
+        <text class="equip-icon {{c.hasProjector ? 'on' : 'off'}}">📽</text>
+        <text class="equip-name">投影</text>
+        <text class="equip-state {{c.hasProjector ? 'on' : 'off'}}">{{c.hasProjector ? '有' : '无'}}</text>
+      </view>
+      <view class="equip-item">
+        <text class="equip-icon {{c.hasPc ? 'on' : 'off'}}">💻</text>
+        <text class="equip-name">电脑</text>
+        <text class="equip-state {{c.hasPc ? 'on' : 'off'}}">{{c.hasPc ? '有' : '无'}}</text>
+      </view>
+      <view class="equip-item">
+        <text class="equip-icon {{c.hasMic ? 'on' : 'off'}}">🎤</text>
+        <text class="equip-name">麦克风</text>
+        <text class="equip-state {{c.hasMic ? 'on' : 'off'}}">{{c.hasMic ? '有' : '无'}}</text>
+      </view>
+      <view class="equip-item">
+        <text class="equip-icon {{c.hasWhiteboard ? 'on' : 'off'}}">📝</text>
+        <text class="equip-name">白板</text>
+        <text class="equip-state {{c.hasWhiteboard ? 'on' : 'off'}}">{{c.hasWhiteboard ? '有' : '无'}}</text>
+      </view>
+      <view class="equip-item">
+        <text class="equip-icon {{c.hasWifi ? 'on' : 'off'}}">📶</text>
+        <text class="equip-name">WiFi</text>
+        <text class="equip-state {{c.hasWifi ? 'on' : 'off'}}">{{c.hasWifi ? '有' : '无'}}</text>
+      </view>
+      <view class="equip-item">
+        <text class="equip-icon {{c.socketCount ? 'on' : 'off'}}">🔌</text>
+        <text class="equip-name">插座</text>
+        <text class="equip-state {{c.socketCount ? 'on' : 'off'}}">{{c.socketCount ? c.socketCount + '个' : '未知'}}</text>
+      </view>
+    </view>
+    <view class="divider"></view>
+    <view class="t-sub" wx:if="{{c.socketDesc}}">🔌 插座位置：{{c.socketDesc}}</view>
+    <view class="t-sub" wx:if="{{c.otherDevices}}">🧩 其他设备：{{c.otherDevices}}</view>
+    <view class="t-sub" wx:if="{{c.envDesc}}">🌿 环境：{{c.envDesc}}</view>
+    <view class="t-sub" wx:if="{{c.deskDesc}}">🪑 桌椅：{{c.deskDesc}}</view>
+    <view class="t-sub" wx:if="{{c.lightDesc}}">💡 采光：{{c.lightDesc}}</view>
+    <view class="t-tip" wx:if="{{!c.socketDesc && !c.otherDevices && !c.envDesc && !c.deskDesc && !c.lightDesc}}">暂无更多环境描述，欢迎贡献</view>
+  </view>
+
+  <!-- 插座位置标记 -->
+  <view class="card">
+    <view class="card-title">🔌 插座位置标记（{{socketMarks.length}}）</view>
+    <view class="t-tip" style="margin-bottom:12rpx">点击圆点可反馈标记是否准确</view>
+
+    <!-- 有照片的标记：照片 + absolute 圆点 -->
+    <view class="mark-image-wrap" wx:for="{{marksOnImages}}" wx:key="id">
+      <view class="mark-image-box">
+        <image class="mark-img" src="{{item.imageUrl}}" mode="widthFix" />
+        <view
+          class="mark-dot"
+          style="left:{{item.posX}}%;top:{{item.posY}}%"
+          bindtap="onMarkTap"
+          data-mark="{{item}}"
+        >
+          <view class="mark-dot-inner"></view>
+        </view>
+      </view>
+      <view class="t-tip">{{item.wallText}} · 准确率 {{item.accuracyRate}} · 点圆点反馈</view>
+    </view>
+
+    <!-- 无照片标记：文字列表 -->
+    <view class="mark-row" wx:for="{{marksNoImage}}" wx:key="id" bindtap="onMarkTap" data-mark="{{item}}">
+      <text class="tag tag-warm">{{item.wallText}}</text>
+      <view class="flex-1">
+        <view class="t-sub" wx:if="{{item.note}}">{{item.note}}</view>
+        <view class="t-tip">准确率 {{item.accuracyRate}} · 点按反馈准确/不准</view>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+
+    <empty wx:if="{{socketMarks.length === 0}}" text="还没有插座标记" sub="点右上角「标插座」，在照片上点一下就能帮助后来人" />
+  </view>
+
+  <!-- 照片九宫格 -->
+  <view class="card">
+    <view class="card-title">📷 教室照片（{{allImages.length}}）</view>
+    <scroll-view scroll-x class="cat-tabs">
+      <view
+        class="cat-tab {{activeCat === item.value ? 'cat-on' : ''}}"
+        wx:for="{{categories}}"
+        wx:key="value"
+        data-cat="{{item.value}}"
+        bindtap="onCatTap"
+      >{{item.label}}</view>
+    </scroll-view>
+    <view class="img-grid" wx:if="{{shownImages.length > 0}}">
+      <view class="img-cell" wx:for="{{shownImages}}" wx:key="id" bindtap="previewImage" data-index="{{index}}">
+        <image src="{{item.url}}" mode="aspectFill" lazy-load />
+      </view>
+    </view>
+    <empty wx:else text="该分类暂无照片" mode="empty" />
+    <view class="t-tip" style="margin-top:12rpx">照片经社区上传、审核通过后展示</view>
+  </view>
+
+  <!-- 文字导航 -->
+  <view class="card">
+    <view class="card-title">🧭 文字导航</view>
+    <view class="t-sub" wx:if="{{!showGuide}}" bindtap="toggleGuide">点击展开：从楼入口到 {{c.roomNo}} 教室的路线指引</view>
+    <view wx:if="{{showGuide}}" class="guide-text">{{guideText}}</view>
+  </view>
+
+  <!-- 评价 -->
+  <view class="card">
+    <view class="card-title">💬 评价（{{reviews.length}}）</view>
+    <view class="review-item" wx:for="{{reviews}}" wx:key="id">
+      <view class="flex-between">
+        <text class="t-bold">{{item.userName || '同学'}}</text>
+        <text class="review-stars">{{'★'}}{{item.rating}}</text>
+      </view>
+      <view class="t-sub">{{item.content}}</view>
+      <view class="t-tip">{{item.timeText}}</view>
+    </view>
+    <empty wx:if="{{reviews.length === 0}}" text="还没有评价，来抢沙发" />
+
+    <view class="divider"></view>
+    <view class="flex-row">
+      <text class="t-sub" style="margin-right:12rpx">评分</text>
+      <view class="stars">
+        <text class="star {{reviewRating >= v ? 'star-on' : ''}}" wx:for="{{[1,2,3,4,5]}}" wx:key="*this" data-v="{{item}}" bindtap="onRatingTap">★</text>
+      </view>
+    </view>
+    <textarea class="form-textarea" placeholder="说说这个教室自习体验如何…" value="{{reviewContent}}" bindinput="onReviewInput" maxlength="300" />
+    <button class="btn btn-block btn-sm-btn" bindtap="submitReview" disabled="{{submittingReview}}">{{submittingReview ? '提交中…' : '发布评价'}}</button>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="bottom-bar">
+    <button class="btn btn-ghost flex-1" bindtap="openStatus">⚡ 上报状态</button>
+    <button class="btn flex-1" bindtap="openUpload">📷 上传照片</button>
+    <button class="btn btn-warm flex-1" bindtap="openReport">✏️ 更新资料</button>
+  </view>
+</block>
+
+<!-- ============ 弹层们 ============ -->
+
+<!-- 我要更新资料 -->
+<view class="mask" wx:if="{{showReport}}" bindtap="closeReport">
+  <view class="popup" catchtap="noop">
+    <view class="popup-title">✏️ 更新教室资料</view>
+    <view class="t-tip" style="margin-bottom:20rpx">修正会进入审核，同字段多人冲突时由审核员裁定</view>
+    <view class="form-item">
+      <text class="form-label">选择字段</text>
+      <picker range="{{reportFields}}" range-key="label" value="{{reportIndex}}" bindchange="onReportField">
+        <view class="form-picker">{{reportFields[reportIndex].label}} ▾</view>
+      </picker>
+    </view>
+    <view class="form-item" wx:if="{{reportFields[reportIndex].type === 'bool'}}">
+      <text class="form-label">实际情况</text>
+      <picker range="{{['有', '无']}}" value="{{reportBoolValue === 'true' ? 0 : 1}}" bindchange="onReportBool">
+        <view class="form-picker">{{reportBoolValue === 'true' ? '有' : '无'}} ▾</view>
+      </picker>
+    </view>
+    <view class="form-item" wx:else>
+      <text class="form-label">修正后的内容</text>
+      <input class="form-input" type="{{reportFields[reportIndex].type === 'number' ? 'number' : 'text'}}" value="{{reportValue}}" bindinput="onReportValue" placeholder="填写最新情况" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">补充说明（可选）</text>
+      <input class="form-input" value="{{reportRemark}}" bindinput="onReportRemark" placeholder="如：插座新增了2个在讲台左侧" />
+    </view>
+    <button class="btn btn-block" bindtap="submitReport">提交修正</button>
+  </view>
+</view>
+
+<!-- 上传照片 -->
+<view class="mask" wx:if="{{showUpload}}" bindtap="closeUpload">
+  <view class="popup" catchtap="noop">
+    <view class="popup-title">📷 上传教室照片</view>
+    <view class="form-item">
+      <text class="form-label">照片分类</text>
+      <picker range="{{categories}}" range-key="label" value="{{uploadCatIndex > 0 ? uploadCatIndex : 0}}" bindchange="onUploadCat">
+        <view class="form-picker">{{categories[uploadCatIndex > 0 ? uploadCatIndex : 0].label}} ▾</view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <text class="form-label">照片描述（可选）</text>
+      <input class="form-input" value="{{uploadDesc}}" bindinput="onUploadDesc" placeholder="如：讲台左侧新增插排" />
+    </view>
+    <view class="upload-preview" bindtap="chooseUploadImage">
+      <image wx:if="{{uploadPreview}}" src="{{uploadPreview}}" mode="aspectFill" class="upload-img" />
+      <block wx:else>
+        <view class="upload-plus">＋</view>
+        <view class="t-tip">点击选择照片（jpg/png/webp，≤8MB）</view>
+      </block>
+    </view>
+    <button class="btn btn-block" bindtap="chooseUploadImage" disabled="{{uploading}}">{{uploading ? '上传中…' : (uploadPreview ? '重新选择并上传' : '选择照片并上传')}}</button>
+    <view class="t-tip" style="margin-top:16rpx;text-align:center">上传后需审核通过才会公开展示</view>
+  </view>
+</view>
+
+<!-- 标记插座 -->
+<view class="mask" wx:if="{{showMark}}" bindtap="closeMark">
+  <view class="popup" catchtap="noop">
+    <view class="popup-title">🔌 标记插座位置</view>
+    <view class="form-item">
+      <text class="form-label">选择照片</text>
+      <picker range="{{markImages}}" range-key="description" value="{{markImageIndex}}" bindchange="onMarkImage">
+        <view class="form-picker">照片 {{markImageIndex + 1}}/{{markImages.length}}（点击图片标记位置）▾</view>
+      </picker>
+    </view>
+    <view class="mark-picker-box">
+      <image id="mark-image" class="mark-pick-img" src="{{markImages[markImageIndex].url}}" mode="widthFix" bindtap="onMarkImageTap" bindload="queryMarkRect" />
+      <view class="mark-dot mark-dot-temp" wx:for="{{markPoints}}" wx:key="posX" style="left:{{item.posX}}%;top:{{item.posY}}%">
+        <view class="mark-dot-inner"></view>
+      </view>
+    </view>
+    <view class="t-tip" style="margin-bottom:16rpx">已选位置：{{markPoints.length ? 'X ' + markPoints[0].posX + '% / Y ' + markPoints[0].posY + '%' : '未选择，点击图片上的插座位置'}}</view>
+    <view class="form-item">
+      <text class="form-label">墙面位置</text>
+      <picker range="{{['前墙', '后墙', '左墙', '右墙', '讲台附近', '窗边']}}" value="{{markWallIndex}}" bindchange="onMarkWall">
+        <view class="form-picker">{{['前墙', '后墙', '左墙', '右墙', '讲台附近', '窗边'][markWallIndex]}} ▾</view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <text class="form-label">备注（可选）</text>
+      <input class="form-input" value="{{markNote}}" bindinput="onMarkNote" placeholder="如：讲台左侧地面插排，2孔+3孔" />
+    </view>
+    <button class="btn btn-block" bindtap="submitMark">提交标记</button>
+  </view>
+</view>
+
+<!-- 临时状态上报 -->
+<view class="mask" wx:if="{{showStatus}}" bindtap="closeStatus">
+  <view class="popup" catchtap="noop">
+    <view class="popup-title">⚡ 上报临时状态</view>
+    <view class="t-tip" style="margin-bottom:20rpx">社区用户反馈，非官方数据，默认 4 小时有效</view>
+    <view class="form-item">
+      <text class="form-label">占用情况</text>
+      <picker range="{{occupancyOptions}}" range-key="label" value="{{statusOccIndex}}" bindchange="onStatusOcc">
+        <view class="form-picker">{{occupancyOptions[statusOccIndex].label}} ▾</view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <text class="form-label">安静度：{{statusQuiet}}★</text>
+      <slider min="1" max="5" step="1" value="{{statusQuiet}}" activeColor="#3D7EFF" bindchange="onStatusQuiet" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">空调</text>
+      <picker range="{{['正常', '损坏', '未知']}}" value="{{statusAcIndex}}" bindchange="onStatusAc">
+        <view class="form-picker">{{['正常', '损坏', '未知'][statusAcIndex]}} ▾</view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <text class="form-label">插座</text>
+      <picker range="{{['正常', '损坏', '未知']}}" value="{{statusSocketIndex}}" bindchange="onStatusSocket">
+        <view class="form-picker">{{['正常', '损坏', '未知'][statusSocketIndex]}} ▾</view>
+      </picker>
+    </view>
+    <view class="form-item" wx:if="{{statusOccIndex === 2 || statusOccIndex === 1}}">
+      <text class="form-label">占用原因</text>
+      <input class="form-input" value="{{statusReason}}" bindinput="onStatusReason" placeholder="如：社团活动 / 老师答疑" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">有效时长（小时）</text>
+      <input class="form-input" type="number" value="{{statusHours}}" bindinput="onStatusHours" />
+    </view>
+    <button class="btn btn-block" bindtap="submitStatus">提交状态</button>
+  </view>
+</view>
+
+<!-- 申请新增教室 -->
+<view class="mask" wx:if="{{showApply}}" bindtap="closeApply">
+  <view class="popup" catchtap="noop">
+    <view class="popup-title">🏫 申请新增教室</view>
+    <view class="t-tip" style="margin-bottom:20rpx">该教室尚未收录，提交申请经审核后收录进系统</view>
+    <view class="form-item">
+      <text class="form-label">教学楼</text>
+      <picker range="{{applyBuildings}}" range-key="name" value="{{applyBuildingIndex}}" bindchange="onApplyBuilding">
+        <view class="form-picker {{applyBuildingIndex < 0 ? 'placeholder' : ''}}">{{applyBuildingIndex >= 0 ? applyBuildings[applyBuildingIndex].name : '请选择教学楼'}} ▾</view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <text class="form-label">楼层</text>
+      <input class="form-input" type="number" value="{{applyFloorNo}}" bindinput="onApplyFloor" placeholder="如 3" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">教室编号</text>
+      <input class="form-input" value="{{applyRoomNo}}" bindinput="onApplyRoom" placeholder="如 301" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">补充说明（可选）</text>
+      <input class="form-input" value="{{applyRemark}}" bindinput="onApplyRemark" placeholder="如：小教室，有空调白板" />
+    </view>
+    <button class="btn btn-block" bindtap="submitApply">提交申请</button>
+  </view>
+</view>
